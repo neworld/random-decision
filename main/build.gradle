@@ -20,6 +20,8 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$KOTLIN_VERSION"
+    testCompile 'junit:junit:4.12'
+    testCompile "org.jetbrains.kotlin:kotlin-test:$KOTLIN_VERSION"
 }
 
 jacocoTestReport {
