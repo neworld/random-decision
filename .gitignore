@@ -111,3 +111,6 @@ captures/
 
 ### Android Patch ###
 gen-external-apklibs
+
+### Project based
+.properties
