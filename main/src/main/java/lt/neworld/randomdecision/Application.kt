@@ -1,8 +1,11 @@
 package lt.neworld.randomdecision
 
+import lt.neworld.randomdecision.chooses.Builder
+import lt.neworld.randomdecision.chooses.Choice
 import java.awt.BorderLayout
 import java.awt.FlowLayout
-import java.io.File
+import java.io.FileInputStream
+import java.io.InputStreamReader
 import javax.swing.*
 
 /**
@@ -22,10 +25,10 @@ class Application {
     }
 
     val content = JPanel(BorderLayout()).apply {
-            border = BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING)
-            add(label, BorderLayout.NORTH)
-            add(categories, BorderLayout.SOUTH)
-        }
+        border = BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING)
+        add(label, BorderLayout.NORTH)
+        add(categories, BorderLayout.SOUTH)
+    }
 
 
     private val chooseDir = JMenuItem("Choose categories dir").apply {
@@ -38,14 +41,16 @@ class Application {
         add(menu)
     }
 
+    val frame = JFrame("Random decision").apply {
+        defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+        contentPane.add(content)
+        jMenuBar = this@Application.menuBar
+        pack()
+    }
+
     fun run() {
-        JFrame("Random decision").apply {
-            defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-            isVisible = true
-            contentPane.add(content)
-            jMenuBar = this@Application.menuBar
-            pack()
-        }
+        frame.isVisible = true
+        refreshCategories()
     }
 
     private fun openCategoriesDirChooser() {
@@ -69,9 +74,31 @@ class Application {
     }
 
     private fun refreshCategories() {
+        categories.removeAll()
+        val choices = AppProperties.categoriesDir
+                .listFiles { file, title -> title.endsWith(FILE_SUFFIX) }
+                .map {
+                    val reader = InputStreamReader(FileInputStream(it))
+                    val fileName = it.name.replace(FILE_SUFFIX, "")
+                    Builder(fileName, reader).build()
+                }
+                .map { choice ->
+                    JButton(choice.title).apply {
+                        addActionListener { pickChoice(choice) }
+                    }
+                }
+        for (button in choices) {
+            categories.add(button)
+        }
+        frame.pack()
+    }
+
+    private fun pickChoice(choice: Choice) {
+        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     companion object {
+        const val FILE_SUFFIX = ".choices"
         const val PADDING = 12
     }
 }
