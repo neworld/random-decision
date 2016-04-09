@@ -24,6 +24,14 @@ dependencies {
     testCompile "org.jetbrains.kotlin:kotlin-test:$KOTLIN_VERSION"
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'lt.neworld.randomdecision.ApplicationKt'
+    }
+
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
 jacocoTestReport {
     reports {
         xml.enabled = true
