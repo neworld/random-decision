@@ -2,6 +2,7 @@ package lt.neworld.randomdecision
 
 import lt.neworld.randomdecision.chooses.Builder
 import lt.neworld.randomdecision.chooses.Choice
+import lt.neworld.randomdecision.chooses.RandomPicker
 import java.awt.BorderLayout
 import java.awt.FlowLayout
 import java.io.FileInputStream
@@ -94,7 +95,9 @@ class Application {
     }
 
     private fun pickChoice(choice: Choice) {
-        throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
+        var path = RandomPicker(choice).pick()
+        label.text = path.map { it.title }.joinToString(" > ")
+        frame.pack()
     }
 
     companion object {
