@@ -86,7 +86,7 @@ class Application {
         val choices = AppProperties.categoriesDir
                 .listFiles { file, title -> title.endsWith(FILE_SUFFIX) }
                 .map {
-                    val reader = InputStreamReader(FileInputStream(it))
+                    val reader = InputStreamReader(FileInputStream(it), "UTF-8")
                     val fileName = it.name.replace(FILE_SUFFIX, "")
                     Builder(fileName, reader).build()
                 }
