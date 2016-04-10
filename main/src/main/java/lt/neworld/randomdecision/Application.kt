@@ -5,6 +5,8 @@ import lt.neworld.randomdecision.chooses.Choice
 import lt.neworld.randomdecision.chooses.RandomPicker
 import java.awt.BorderLayout
 import java.awt.FlowLayout
+import java.awt.Point
+import java.awt.Toolkit
 import java.io.FileInputStream
 import java.io.InputStreamReader
 import javax.swing.*
@@ -92,6 +94,18 @@ class Application {
             categories.add(button)
         }
         frame.pack()
+        moveToCenter()
+    }
+
+    private var firstMoveToCenter: Boolean = true
+
+    private fun moveToCenter() {
+        if (!firstMoveToCenter) {
+            return
+        }
+        firstMoveToCenter = false
+        val screenSize = Toolkit.getDefaultToolkit().screenSize
+        frame.location = Point((screenSize.width - frame.width) / 2, (screenSize.height - frame.height) / 2)
     }
 
     private fun pickChoice(choice: Choice) {
