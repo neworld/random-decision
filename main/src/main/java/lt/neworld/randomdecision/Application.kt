@@ -17,7 +17,12 @@ import javax.swing.*
  */
 
 fun main(args: Array<String>) {
+    setupLookAndFeel()
     Application().run()
+}
+
+fun setupLookAndFeel() {
+    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
 }
 
 class Application {
