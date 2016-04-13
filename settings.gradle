@@ -1,2 +1,2 @@
-include ':shared'
+include ':shared', ':mobile'
 include 'desktop'
