@@ -6,6 +6,10 @@ package lt.neworld.randomdecision
  */
 
 fun main(args: Array<String>) {
-    setupLookAndFeel()
-    Window().run()
+    if (args.any { it == "--no-gui" }) {
+        CLI().run()
+    } else {
+        setupLookAndFeel()
+        Window().run()
+    }
 }

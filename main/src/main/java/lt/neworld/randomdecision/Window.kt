@@ -1,14 +1,11 @@
 package lt.neworld.randomdecision
 
-import lt.neworld.randomdecision.chooses.Builder
 import lt.neworld.randomdecision.chooses.Choice
 import lt.neworld.randomdecision.chooses.RandomPicker
 import java.awt.BorderLayout
 import java.awt.FlowLayout
 import java.awt.Point
 import java.awt.Toolkit
-import java.io.FileInputStream
-import java.io.InputStreamReader
 import javax.swing.*
 
 fun setupLookAndFeel() {
@@ -73,13 +70,7 @@ class Window {
 
     private fun refreshCategories() {
         categories.removeAll()
-        val choices = AppProperties.categoriesDir
-                .listFiles { file, title -> title.endsWith(FILE_SUFFIX) }
-                .map {
-                    val reader = InputStreamReader(FileInputStream(it), "UTF-8")
-                    val fileName = it.name.replace(FILE_SUFFIX, "")
-                    Builder(fileName, reader).build()
-                }
+        val choices = openChoices()
                 .map { choice ->
                     JButton(choice.title).apply {
                         addActionListener { pickChoice(choice) }
@@ -90,6 +81,10 @@ class Window {
         }
         frame.pack()
         moveToCenter()
+    }
+
+    private fun openChoices(): List<Choice> {
+        return ChoicesLoaderFromDisk(AppProperties.categoriesDir).load()
     }
 
     private var firstMoveToCenter: Boolean = true
@@ -110,7 +105,6 @@ class Window {
     }
 
     companion object {
-        const val FILE_SUFFIX = ".choices"
         const val PADDING = 12
     }
 }
