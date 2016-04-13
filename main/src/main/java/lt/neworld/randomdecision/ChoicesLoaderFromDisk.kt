@@ -1,6 +1,6 @@
 package lt.neworld.randomdecision
 
-import lt.neworld.randomdecision.chooses.Builder
+import lt.neworld.randomdecision.choices.Builder
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStreamReader

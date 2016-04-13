@@ -1,4 +1,4 @@
-package lt.neworld.randomdecision.chooses
+package lt.neworld.randomdecision.choices
 
 import java.io.BufferedReader
 import java.io.InputStream

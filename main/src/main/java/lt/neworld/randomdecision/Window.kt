@@ -1,7 +1,7 @@
 package lt.neworld.randomdecision
 
-import lt.neworld.randomdecision.chooses.Choice
-import lt.neworld.randomdecision.chooses.RandomPicker
+import lt.neworld.randomdecision.choices.Choice
+import lt.neworld.randomdecision.choices.RandomPicker
 import java.awt.BorderLayout
 import java.awt.FlowLayout
 import java.awt.Point

@@ -1,4 +1,4 @@
-package lt.neworld.randomdecision.chooses
+package lt.neworld.randomdecision.choices
 
 import java.security.SecureRandom
 import java.util.*
