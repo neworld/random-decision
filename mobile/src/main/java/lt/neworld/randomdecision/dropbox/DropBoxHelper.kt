@@ -2,7 +2,13 @@ package lt.neworld.randomdecision.dropbox
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import com.dropbox.core.DbxRequestConfig
 import com.dropbox.core.android.Auth
+import com.dropbox.core.http.OkHttpRequestor
+import com.dropbox.core.v2.DbxClientV2
+import com.dropbox.core.v2.files.ListFolderResult
+import rx.Observable
+import rx.schedulers.Schedulers
 
 /**
  * @author Andrius Semionovas
@@ -23,6 +29,34 @@ class DropBoxHelper(
             prefs.edit().putString(KEY_ACCESS_TOKEN, value).apply()
         }
 
+    var path: String
+        get() = prefs.getString(KEY_PATH, "")
+        set(value) {
+            prefs.edit().putString(KEY_PATH, value).apply()
+        }
+
+    val client by lazy {
+        if (accessToken == null) {
+            throw RuntimeException("Can't get client without access token")
+        }
+
+        val config = DbxRequestConfig(
+                "random-decision",
+                "lt-LT",
+                OkHttpRequestor.INSTANCE
+        )
+
+        DbxClientV2(config, accessToken)
+    }
+
+    fun listFiles(path: String): Observable<ListFolderResult> {
+        return Observable.create<ListFolderResult> {
+            val files = client.files().listFolder(path)
+            it.onNext(files)
+            it.onCompleted()
+        }.subscribeOn(Schedulers.io())
+    }
+
     fun onResume() {
         if (accessToken == null) {
             accessToken = Auth.getOAuth2Token()
@@ -36,5 +70,6 @@ class DropBoxHelper(
     companion object {
         private const val PREFS = "dropbox"
         private const val KEY_ACCESS_TOKEN = "access-token"
+        private const val KEY_PATH = "path"
     }
 }

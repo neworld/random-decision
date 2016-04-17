@@ -21,7 +21,6 @@
         </activity>
         <activity android:name=".SettingsActivity">
         </activity>
-
         <activity
             android:name="com.dropbox.core.android.AuthActivity"
             android:configChanges="orientation|keyboard"
@@ -36,6 +35,8 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".FolderChooserActivity">
         </activity>
     </application>
 

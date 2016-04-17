@@ -1,6 +1,7 @@
 package lt.neworld.randomdecision
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -45,7 +46,8 @@ class MainActivity : Activity() {
         if (dropBoxHelper.accessToken == null) {
             Auth.startOAuth2Authentication(this, getString(R.string.dropbox_apy_key))
         } else {
-            //show file picker
+            val intent = Intent(this, FolderChooserActivity::class.java)
+            startActivity(intent)
         }
     }
 }
