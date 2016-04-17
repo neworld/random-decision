@@ -10,6 +10,7 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'jacoco-android'
 
 repositories {
     mavenCentral()
@@ -37,4 +38,12 @@ android {
 dependencies {
     compile project(":shared")
     compile "org.jetbrains.kotlin:kotlin-stdlib:$KOTLIN_VERSION"
+
+    testCompile "org.jetbrains.kotlin:kotlin-test:$KOTLIN_VERSION"
+    testCompile 'org.robolectric:robolectric:3.0'
+    testCompile 'junit:junit:4.12'
+}
+
+jacocoAndroidUnitTestReport {
+    excludes += ['**/*$$*']
 }
