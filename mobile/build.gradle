@@ -38,6 +38,7 @@ android {
 dependencies {
     compile project(":shared")
     compile "org.jetbrains.kotlin:kotlin-stdlib:$KOTLIN_VERSION"
+    compile 'com.dropbox.core:dropbox-core-sdk:2.0.1'
 
     testCompile "org.jetbrains.kotlin:kotlin-test:$KOTLIN_VERSION"
     testCompile 'org.robolectric:robolectric:3.0'
