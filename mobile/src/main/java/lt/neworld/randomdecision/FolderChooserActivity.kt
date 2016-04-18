@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -14,7 +16,7 @@ import com.dropbox.core.v2.files.FolderMetadata
 import com.dropbox.core.v2.files.Metadata
 import lt.neworld.randomdecision.comparators.FolderChooserComparator
 import lt.neworld.randomdecision.dropbox.DropBoxHelper
-import lt.neworld.randomdecision.extensions.emptyToNull
+import lt.neworld.randomdecision.entities.Path
 import lt.neworld.randomdecision.extensions.hideProgress
 import lt.neworld.randomdecision.extensions.showProgress
 import lt.neworld.randomdecision.extensions.showToast
@@ -27,16 +29,28 @@ class FolderChooserActivity : ListActivity() {
         DropBoxHelper(this, { onTokenReady() })
     }
 
-    lateinit var currentPath: String
+    lateinit var currentPath: Path
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        currentPath = dropBoxHelper.path
+        currentPath = Path(dropBoxHelper.path)
         listView.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, pos, id ->
             val file = adapterView.getItemAtPosition(pos) as Metadata
-            currentPath = file.pathDisplay
+            currentPath = Path(file.pathDisplay)
             refreshAll()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.folder_chooser, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_folder_chooser_bank -> back()
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -44,6 +58,12 @@ class FolderChooserActivity : ListActivity() {
         super.onResume()
 
         dropBoxHelper.onResume()
+    }
+
+    private fun back(): Boolean {
+        currentPath = currentPath.back()
+        refreshAll()
+        return true
     }
 
     private fun onTokenReady() {
@@ -56,15 +76,13 @@ class FolderChooserActivity : ListActivity() {
     }
 
     private fun refreshTitle() {
-        actionBar.title = currentFolderName.emptyToNull() ?: "root"
+        actionBar.title = currentPath.currentNode
     }
 
-    private val currentFolderName: String
-        get() = currentPath.split("/").last()
-
     private fun refresh() {
+        Log.d(TAG, "Current path: $currentPath")
         showProgress("Progress...")
-        dropBoxHelper.listFiles(currentPath)
+        dropBoxHelper.listFiles(currentPath.path)
                 .map { it.entries.filter { it is FolderMetadata || it.name.endsWith(".choices") } }
                 .map { it.sortedWith(FolderChooserComparator()) }
                 .observeOn(AndroidSchedulers.mainThread())
