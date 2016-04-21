@@ -54,3 +54,5 @@ dependencies {
 jacocoAndroidUnitTestReport {
     excludes += ['**/*$$*']
 }
+
+check.dependsOn jacocoTestReport
