@@ -50,6 +50,7 @@ class FolderChooserActivity : ListActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_folder_chooser_bank -> back()
+            R.id.menu_folder_chooser_save -> save()
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -63,6 +64,12 @@ class FolderChooserActivity : ListActivity() {
     private fun back(): Boolean {
         currentPath = currentPath.back()
         refreshAll()
+        return true
+    }
+
+    private fun save(): Boolean {
+        dropBoxHelper.path = currentPath.toString()
+        finish()
         return true
     }
 

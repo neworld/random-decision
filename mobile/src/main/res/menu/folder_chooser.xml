@@ -5,4 +5,10 @@
         android:title="back"
         android:icon="@drawable/ic_arrow_back_white_24dp"
         android:showAsAction="always"/>
+
+    <item
+        android:id="@+id/menu_folder_chooser_save"
+        android:title="save"
+        android:icon="@drawable/ic_done_white_24dp"
+        android:showAsAction="always"/>
 </menu>
