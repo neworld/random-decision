@@ -19,6 +19,7 @@ import rx.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import lt.neworld.randomdecision.choices.Builder
 import lt.neworld.randomdecision.choices.Choice
+import lt.neworld.randomdecision.choices.RandomPicker
 import lt.neworld.randomdecision.extensions.showToast
 import rx.Observable
 import java.io.InputStream
@@ -38,6 +39,14 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         list.adapter = adapter
+        list.setOnItemClickListener { adapterView, view, index, id ->
+            pick(adapter.getItem(index))
+        }
+    }
+
+    private fun pick(choice: Choice) {
+        val path = RandomPicker(choice).pick()
+        status.text = path.map { it.title }.joinToString(" -> ")
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
