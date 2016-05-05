@@ -10,18 +10,17 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.dropbox.core.android.Auth
-import lt.neworld.randomdecision.comparators.FolderChooserComparator
-import lt.neworld.randomdecision.dropbox.DropBoxHelper
-import lt.neworld.randomdecision.extensions.hideProgress
-import lt.neworld.randomdecision.extensions.showProgress
-import rx.Subscriber
-import rx.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import lt.neworld.randomdecision.choices.Builder
 import lt.neworld.randomdecision.choices.Choice
 import lt.neworld.randomdecision.choices.RandomPicker
+import lt.neworld.randomdecision.dropbox.DropBoxHelper
+import lt.neworld.randomdecision.extensions.hideProgress
+import lt.neworld.randomdecision.extensions.showProgress
 import lt.neworld.randomdecision.extensions.showToast
 import rx.Observable
+import rx.Subscriber
+import rx.android.schedulers.AndroidSchedulers
 import java.io.InputStream
 import java.io.InputStreamReader
 
@@ -65,7 +64,6 @@ class MainActivity : Activity() {
         showProgress("Progress...")
         dropBoxHelper.listFiles(dropBoxHelper.path)
                 .map { it.entries.filter { it.name.endsWith(".choices") } }
-                .map { it.sortedWith(FolderChooserComparator()) }
                 .flatMapIterable { it }
                 .flatMap {
                     dropBoxHelper
@@ -74,7 +72,12 @@ class MainActivity : Activity() {
                                 t1: InputStream, t2: String -> t2 to t1
                             })
                 }
-                .map { Builder(it.first, InputStreamReader(it.second)).build() }
+                .map {
+                    val title = it.first.split(".").dropLast(1).joinToString(".")
+                    Builder(title, InputStreamReader(it.second)).build()
+                }
+                .toSortedList { a, b -> a.title.first() - b.title.first() }
+                .flatMapIterable { it }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {
                     adapter.clear()
