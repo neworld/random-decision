@@ -9,6 +9,7 @@ import com.dropbox.core.v2.DbxClientV2
 import com.dropbox.core.v2.files.ListFolderResult
 import rx.Observable
 import rx.schedulers.Schedulers
+import java.io.InputStream
 
 /**
  * @author Andrius Semionovas
@@ -53,6 +54,14 @@ class DropBoxHelper(
         return Observable.create<ListFolderResult> {
             val files = client.files().listFolder(path)
             it.onNext(files)
+            it.onCompleted()
+        }.subscribeOn(Schedulers.io())
+    }
+
+    fun openFile(path: String): Observable<InputStream> {
+        return Observable.create<InputStream> {
+            val inputStream = client.files().download(path).inputStream
+            it.onNext(inputStream)
             it.onCompleted()
         }.subscribeOn(Schedulers.io())
     }

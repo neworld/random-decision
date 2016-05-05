@@ -5,8 +5,24 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.TextView
 import com.dropbox.core.android.Auth
+import lt.neworld.randomdecision.comparators.FolderChooserComparator
 import lt.neworld.randomdecision.dropbox.DropBoxHelper
+import lt.neworld.randomdecision.extensions.hideProgress
+import lt.neworld.randomdecision.extensions.showProgress
+import rx.Subscriber
+import rx.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.activity_main.*
+import lt.neworld.randomdecision.choices.Builder
+import lt.neworld.randomdecision.choices.Choice
+import lt.neworld.randomdecision.extensions.showToast
+import rx.Observable
+import java.io.InputStream
+import java.io.InputStreamReader
 
 class MainActivity : Activity() {
 
@@ -14,9 +30,14 @@ class MainActivity : Activity() {
         DropBoxHelper(this, { onTokenReady() })
     }
 
+    val adapter by lazy {
+        ChoiceAdapter()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        list.adapter = adapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -32,7 +53,39 @@ class MainActivity : Activity() {
     }
 
     private fun onTokenReady() {
-        //later will load here
+        showProgress("Progress...")
+        dropBoxHelper.listFiles(dropBoxHelper.path)
+                .map { it.entries.filter { it.name.endsWith(".choices") } }
+                .map { it.sortedWith(FolderChooserComparator()) }
+                .flatMapIterable { it }
+                .flatMap {
+                    dropBoxHelper
+                            .openFile(it.pathLower)
+                            .zipWith(Observable.just(it.pathDisplay.split("/").last()), {
+                                t1: InputStream, t2: String -> t2 to t1
+                            })
+                }
+                .map { Builder(it.first, InputStreamReader(it.second)).build() }
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe {
+                    adapter.clear()
+                    adapter.setNotifyOnChange(false)
+                }
+                .doOnTerminate { hideProgress() }
+                .subscribe(object : Subscriber<Choice>() {
+                    override fun onCompleted() {
+                        adapter.notifyDataSetChanged()
+                    }
+
+                    override fun onError(e: Throwable) {
+                        showToast(e.message ?: "Something bad happened")
+                    }
+
+                    override fun onNext(t: Choice) {
+                        adapter.add(t)
+                    }
+
+                })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -50,4 +103,15 @@ class MainActivity : Activity() {
             startActivity(intent)
         }
     }
+
+    inner class ChoiceAdapter() : ArrayAdapter<Choice>(this, android.R.layout.simple_list_item_1) {
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View? {
+            val item = getItem(position)
+            return super.getView(position, convertView, parent).let { it as TextView }.apply {
+                text = item.title
+            }
+        }
+    }
+
 }

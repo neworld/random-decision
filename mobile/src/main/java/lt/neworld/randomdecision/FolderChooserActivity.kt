@@ -37,7 +37,7 @@ class FolderChooserActivity : ListActivity() {
         currentPath = Path(dropBoxHelper.path)
         listView.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, pos, id ->
             val file = adapterView.getItemAtPosition(pos) as Metadata
-            currentPath = Path(file.pathDisplay)
+            currentPath = Path(file.pathLower)
             refreshAll()
         }
     }

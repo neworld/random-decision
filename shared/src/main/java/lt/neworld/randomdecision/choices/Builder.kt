@@ -1,7 +1,6 @@
 package lt.neworld.randomdecision.choices
 
 import java.io.BufferedReader
-import java.io.InputStream
 import java.io.Reader
 import java.util.*
 
@@ -22,7 +21,7 @@ class Builder(
     }
 
     fun build(): Choice {
-        bufferedReader.lines().forEach {
+        bufferedReader.lineSequence().forEach {
             val prepared = it.trim()
             if (prepared.isEmpty()) {
                 return@forEach
