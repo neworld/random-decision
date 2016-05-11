@@ -15,3 +15,8 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-dontwarn rx.**
+-dontwarn okio.**
+-dontwarn com.fasterxml.jackson.databind.**
+-dontwarn com.dropbox.core.DbxStandardSessionStore

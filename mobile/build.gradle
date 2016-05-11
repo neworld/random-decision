@@ -29,7 +29,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -43,7 +43,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$KOTLIN_VERSION"
     compile 'com.dropbox.core:dropbox-core-sdk:2.0.3'
     compile 'io.reactivex:rxjava:1.1.5'
-    compile 'io.reactivex:rxandroid:1.2.0'
+    compile 'io.reactivex:rxandroid:1.2.0@aar'
     compile 'com.squareup.okhttp:okhttp:2.7.5'
 
     testCompile "org.jetbrains.kotlin:kotlin-test:$KOTLIN_VERSION"
