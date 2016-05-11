@@ -18,7 +18,7 @@ import lt.neworld.randomdecision.dropbox.DropBoxHelper
 import lt.neworld.randomdecision.extensions.hideProgress
 import lt.neworld.randomdecision.extensions.showProgress
 import lt.neworld.randomdecision.extensions.showToast
-import rx.Observable
+import rx.Single
 import rx.Subscriber
 import rx.android.schedulers.AndroidSchedulers
 import java.io.InputStream
@@ -64,13 +64,14 @@ class MainActivity : Activity() {
         showProgress("Progress...")
         dropBoxHelper.listFiles(dropBoxHelper.path)
                 .map { it.entries.filter { it.name.endsWith(".choices") } }
+                .toObservable()
                 .flatMapIterable { it }
                 .flatMap {
                     dropBoxHelper
                             .openFile(it.pathLower)
-                            .zipWith(Observable.just(it.pathDisplay.split("/").last()), {
+                            .zipWith(Single.just(it.pathDisplay.split("/").last()), {
                                 t1: InputStream, t2: String -> t2 to t1
-                            })
+                            }).toObservable()
                 }
                 .map {
                     val title = it.first.split(".").dropLast(1).joinToString(".")

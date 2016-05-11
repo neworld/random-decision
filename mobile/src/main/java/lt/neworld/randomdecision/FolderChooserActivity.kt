@@ -93,7 +93,7 @@ class FolderChooserActivity : ListActivity() {
                 .map { it.entries.filter { it is FolderMetadata || it.name.endsWith(".choices") } }
                 .map { it.sortedWith(FolderChooserComparator()) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnTerminate { hideProgress() }
+                .doAfterTerminate { hideProgress() }
                 .subscribe(object : Subscriber<List<Metadata>>() {
                     override fun onNext(t: List<Metadata>) {
                         listAdapter = FolderAdapter(t)
