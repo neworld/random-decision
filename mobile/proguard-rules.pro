@@ -16,6 +16,8 @@
 #   public *;
 #}
 
+-dontobfuscate
+
 -dontwarn rx.**
 -dontwarn okio.**
 -dontwarn com.fasterxml.jackson.databind.**
