@@ -1,3 +1,6 @@
+def keyPropFile = file("key.properties")
+def hasKey = keyPropFile.canRead()
+
 buildscript {
     repositories {
         mavenCentral()
@@ -30,10 +33,9 @@ android {
 
     signingConfigs {
         release {
-            def propFile = file("key.properties")
-            if (propFile.canRead()) {
+            if (hasKey) {
                 def prop = new Properties()
-                prop.load(new FileInputStream(propFile))
+                prop.load(new FileInputStream(keyPropFile))
 
                 storeFile file(prop['PATH'])
                 keyAlias prop['ALIAS']
@@ -47,7 +49,9 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            if (hasKey) {
+                signingConfig signingConfigs.release
+            }
         }
     }
     lintOptions {
