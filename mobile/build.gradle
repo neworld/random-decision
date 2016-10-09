@@ -21,7 +21,7 @@ android {
     buildToolsVersion "24.0.3"
 
     defaultConfig {
-        applicationId "lt.neworld.randomdecision"
+        applicationId "lt.neworld.randomdecision2"
         minSdkVersion 21
         targetSdkVersion 24
         versionCode 1
