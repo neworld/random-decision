@@ -22,3 +22,5 @@
 -dontwarn okio.**
 -dontwarn com.fasterxml.jackson.databind.**
 -dontwarn com.dropbox.core.DbxStandardSessionStore
+-dontwarn com.squareup.okhttp.**
+-dontwarn com.google.appengine.api.**

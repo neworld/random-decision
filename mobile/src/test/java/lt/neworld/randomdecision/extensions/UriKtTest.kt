@@ -3,7 +3,7 @@ package lt.neworld.randomdecision.extensions
 import android.net.Uri
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.RobolectricGradleTestRunner
+import org.robolectric.RobolectricTestRunner
 import kotlin.test.assertEquals
 
 /**
@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
  * *
  * @since 2016-04-17
  */
-@RunWith(RobolectricGradleTestRunner::class)
+@RunWith(RobolectricTestRunner::class)
 class UriKtTest {
 
     @Test

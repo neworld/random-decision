@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import com.dropbox.core.DbxRequestConfig
 import com.dropbox.core.android.Auth
-import com.dropbox.core.http.OkHttpRequestor
 import com.dropbox.core.v2.DbxClientV2
 import com.dropbox.core.v2.files.ListFolderResult
 import rx.Single
@@ -41,11 +40,7 @@ class DropBoxHelper(
             throw RuntimeException("Can't get client without access token")
         }
 
-        val config = DbxRequestConfig(
-                "random-decision",
-                "lt-LT",
-                OkHttpRequestor.INSTANCE
-        )
+        val config = DbxRequestConfig("random-decision")
 
         DbxClientV2(config, accessToken)
     }

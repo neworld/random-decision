@@ -16,52 +16,52 @@ class FolderChooserComparatorTest {
 
     @Test
     fun testCompare_bothFolderWithSameName_zero() {
-        var left = folder("foo")
-        var right = folder("foo")
+        val left = folder("foo")
+        val right = folder("foo")
 
         assertEquals(0, fixture.compare(left, right))
     }
 
     @Test
     fun testCompare_bothFilesWithSameName_zero() {
-        var left = file("foo")
-        var right = file("foo")
+        val left = file("foo")
+        val right = file("foo")
 
         assertEquals(0, fixture.compare(left, right))
     }
 
     @Test
     fun testCompare_bothFilesDiffName_nonZero() {
-        var left = file("foo")
-        var right = file("bar")
+        val left = file("foo")
+        val right = file("bar")
 
         assertTrue(fixture.compare(left, right) > 0)
     }
 
     @Test
     fun testCompare_bothFoldersDiffName_nonZero() {
-        var left = folder("bar")
-        var right = folder("foo")
+        val left = folder("bar")
+        val right = folder("foo")
 
         assertTrue(fixture.compare(left, right) < 0)
     }
 
     @Test
     fun testCompare_leftFileRightFolderDiffName_nonZero() {
-        var left = file("bar")
-        var right = folder("foo")
+        val left = file("bar")
+        val right = folder("foo")
 
         assertTrue(fixture.compare(left, right) > 0)
     }
 
     @Test
     fun testCompare_caseInsensitive() {
-        var left = file("foo")
-        var right = file("Foo")
+        val left = file("foo")
+        val right = file("Foo")
 
         assertEquals(0, fixture.compare(left, right))
     }
 
-    fun folder(name: String) = FolderMetadata(name, "", "", name)
+    fun folder(name: String) = FolderMetadata(name, name)
     fun file(name: String) = Metadata(name, "", "", name)
 }
