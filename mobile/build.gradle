@@ -27,19 +27,6 @@ android {
         versionCode 1
         versionName "1.0.0.1"
     }
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-    lintOptions {
-        warning "InvalidPackage"
-        abortOnError false
-    }
-    packagingOptions {
-        exclude "META-INF/LICENSE"
-    }
 
     signingConfigs {
         release {
@@ -50,10 +37,25 @@ android {
 
                 storeFile file(prop['PATH'])
                 keyAlias prop['ALIAS']
-                storePassword prop['PWS']
-                keyPassword prop['PWS']
+                storePassword prop['PSW']
+                keyPassword prop['PSW']
             }
         }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+    lintOptions {
+        warning "InvalidPackage"
+        abortOnError false
+    }
+    packagingOptions {
+        exclude "META-INF/LICENSE"
     }
 }
 
