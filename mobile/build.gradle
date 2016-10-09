@@ -40,6 +40,21 @@ android {
     packagingOptions {
         exclude "META-INF/LICENSE"
     }
+
+    signingConfigs {
+        release {
+            def propFile = file("key.properties")
+            if (propFile.canRead()) {
+                def prop = new Properties()
+                prop.load(new FileInputStream(propFile))
+
+                storeFile file(prop['PATH'])
+                keyAlias prop['ALIAS']
+                storePassword prop['PWS']
+                keyPassword prop['PWS']
+            }
+        }
+    }
 }
 
 dependencies {
