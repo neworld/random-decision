@@ -35,6 +35,7 @@ android {
     }
     lintOptions {
         warning "InvalidPackage"
+        abortOnError false
     }
     packagingOptions {
         exclude "META-INF/LICENSE"
