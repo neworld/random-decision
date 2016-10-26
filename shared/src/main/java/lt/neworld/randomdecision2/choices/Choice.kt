@@ -8,7 +8,11 @@ data class Choice(
         val title: String,
         val weight: Int,
         val children:MutableList<Choice> = arrayListOf()
-) {
+): Comparable<Choice> {
+    override fun compareTo(other: Choice): Int {
+        return this.title.first() - other.title.first()
+    }
+
     companion object {
         fun of(line: String): Choice {
             val pieces = line.split("\\W+".toRegex(), limit = 2)
@@ -17,5 +21,9 @@ data class Choice(
             }
             return Choice(pieces.last(), pieces.first().toInt())
         }
+
+        const val FILE_EXT = ".choices"
+
+        fun getName(fileName: String) = fileName.split(".").dropLast(1).joinToString(".")
     }
 }

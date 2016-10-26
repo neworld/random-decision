@@ -3,6 +3,7 @@ package lt.neworld.randomdecision2
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -15,24 +16,31 @@ import lt.neworld.randomdecision2.choices.Builder
 import lt.neworld.randomdecision2.choices.Choice
 import lt.neworld.randomdecision2.choices.RandomPicker
 import lt.neworld.randomdecision2.dropbox.DropBoxHelper
-import lt.neworld.randomdecision2.extensions.hideProgress
-import lt.neworld.randomdecision2.extensions.showProgress
+import lt.neworld.randomdecision2.extensions.ignoreOnComplete
 import lt.neworld.randomdecision2.extensions.showToast
 import rx.Single
 import rx.Subscriber
+import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
+import rx.subjects.PublishSubject
 import java.io.InputStream
 import java.io.InputStreamReader
 
 class MainActivity : Activity() {
 
-    val dropBoxHelper by lazy {
+    private val dropBoxHelper by lazy {
         DropBoxHelper(this, { onTokenReady() })
     }
 
-    val adapter by lazy {
+    private val adapter by lazy {
         ChoiceAdapter()
     }
+
+    private val choicesListUpdates = PublishSubject.create<List<Choice>>()
+
+    private val cache = Cache(this)
+
+    private lateinit var loaderFromCache: Subscription
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +49,25 @@ class MainActivity : Activity() {
         list.setOnItemClickListener { adapterView, view, index, id ->
             pick(adapter.getItem(index))
         }
+
+        choicesListUpdates
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : Subscriber<List<Choice>>() {
+                    override fun onCompleted() {
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.d(TAG, "Failed load", e)
+                        showToast(e.message ?: "Something bad happened")
+                    }
+
+                    override fun onNext(t: List<Choice>) {
+                        adapter.clear()
+                        adapter.addAll(t)
+                    }
+                })
+
+        loaderFromCache = cache.loadFromCache().subscribe(choicesListUpdates.ignoreOnComplete())
     }
 
     private fun pick(choice: Choice) {
@@ -60,10 +87,15 @@ class MainActivity : Activity() {
         dropBoxHelper.onResume()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        cache.release()
+    }
+
     private fun onTokenReady() {
-        showProgress("Progress...")
         dropBoxHelper.listFiles(dropBoxHelper.path)
-                .map { it.entries.filter { it.name.endsWith(".choices") } }
+                .map { it.entries.filter { it.name.endsWith(Choice.FILE_EXT) } }
                 .toObservable()
                 .flatMapIterable { it }
                 .flatMap {
@@ -73,32 +105,16 @@ class MainActivity : Activity() {
                                 t1: InputStream, t2: String -> t2 to t1
                             }).toObservable()
                 }
+                .doOnNext { cache.saveToCache(it.first, it.second) }
                 .map {
-                    val title = it.first.split(".").dropLast(1).joinToString(".")
+                    val title = Choice.getName(it.first)
                     Builder(title, InputStreamReader(it.second)).build()
                 }
-                .toSortedList { a, b -> a.title.first() - b.title.first() }
-                .flatMapIterable { it }
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe {
-                    adapter.clear()
-                    adapter.setNotifyOnChange(false)
-                }
-                .doOnTerminate { hideProgress() }
-                .subscribe(object : Subscriber<Choice>() {
-                    override fun onCompleted() {
-                        adapter.notifyDataSetChanged()
-                    }
-
-                    override fun onError(e: Throwable) {
-                        showToast(e.message ?: "Something bad happened")
-                    }
-
-                    override fun onNext(t: Choice) {
-                        adapter.add(t)
-                    }
-
-                })
+                .toSortedList(Choice::compareTo)
+                .doOnSubscribe { progressBar.visibility = View.VISIBLE }
+                .doOnTerminate { progressBar.visibility = View.GONE }
+                .doOnNext { loaderFromCache.unsubscribe() }
+                .subscribe(choicesListUpdates)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -127,4 +143,7 @@ class MainActivity : Activity() {
         }
     }
 
+    companion object {
+        private const val TAG = "MainActivity"
+    }
 }
