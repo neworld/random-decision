@@ -111,6 +111,7 @@ class MainActivity : Activity() {
                     Builder(title, InputStreamReader(it.second)).build()
                 }
                 .toSortedList(Choice::compareTo)
+                .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { progressBar.visibility = View.VISIBLE }
                 .doOnTerminate { progressBar.visibility = View.GONE }
                 .doOnNext { loaderFromCache.unsubscribe() }
