@@ -27,7 +27,7 @@ android {
         applicationId "lt.neworld.randomdecision2"
         minSdkVersion 21
         targetSdkVersion 24
-        versionCode 2
+        versionCode 3
         versionName "1.1.1"
     }
 
