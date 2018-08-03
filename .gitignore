@@ -114,3 +114,5 @@ gen-external-apklibs
 
 ### Project based
 .properties
+
+.idea

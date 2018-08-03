@@ -22,6 +22,7 @@ import rx.Single
 import rx.Subscriber
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
+import rx.functions.Func2
 import rx.subjects.PublishSubject
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -29,7 +30,7 @@ import java.io.InputStreamReader
 class MainActivity : Activity() {
 
     private val dropBoxHelper by lazy {
-        DropBoxHelper(this, { onTokenReady() })
+        DropBoxHelper(this) { onTokenReady() }
     }
 
     private val adapter by lazy {
@@ -102,13 +103,13 @@ class MainActivity : Activity() {
                     dropBoxHelper
                             .openFile(it.pathLower)
                             .zipWith(Single.just(it.pathDisplay.split("/").last()), {
-                                t1: InputStream, t2: String -> t2 to t1
+                                t1: () -> InputStream, t2: String -> t2 to t1
                             }).toObservable()
                 }
-                .doOnNext { cache.saveToCache(it.first, it.second) }
+                .doOnNext { cache.saveToCache(it.first, it.second()) }
                 .map {
                     val title = Choice.getName(it.first)
-                    Builder(title, InputStreamReader(it.second)).build()
+                    Builder(title, InputStreamReader(it.second())).build()
                 }
                 .toSortedList(Choice::compareTo)
                 .observeOn(AndroidSchedulers.mainThread())

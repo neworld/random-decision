@@ -19,8 +19,9 @@
 -dontobfuscate
 
 -dontwarn rx.**
+
 -dontwarn okio.**
--dontwarn com.fasterxml.jackson.databind.**
--dontwarn com.dropbox.core.DbxStandardSessionStore
+-dontwarn okhttp3.**
 -dontwarn com.squareup.okhttp.**
--dontwarn com.google.appengine.api.**
+-dontwarn com.google.appengine.**
+-dontwarn javax.servlet.**

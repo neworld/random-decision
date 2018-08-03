@@ -13,22 +13,22 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'jacoco-android'
+apply plugin: "com.vanniktech.android.junit.jacoco"
 
 repositories {
-    mavenCentral()
+    google()
 }
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.3"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
         applicationId "lt.neworld.randomdecision2"
-        minSdkVersion 21
-        targetSdkVersion 24
-        versionCode 3
-        versionName "1.1.1"
+        minSdkVersion 23
+        targetSdkVersion 27
+        versionCode 4
+        versionName "1.1.2"
     }
 
     signingConfigs {
@@ -64,20 +64,21 @@ android {
 }
 
 dependencies {
-    compile project(":shared")
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$KOTLIN_VERSION"
-    compile 'com.dropbox.core:dropbox-core-sdk:2.1.2'
-    compile 'io.reactivex:rxjava:1.2.1'
-    compile 'io.reactivex:rxandroid:1.2.1@aar'
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    implementation project(":shared")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$KOTLIN_VERSION"
+    implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
+    implementation 'io.reactivex:rxjava:1.3.8'
+    implementation 'io.reactivex:rxandroid:1.2.1@aar'
 
-    testCompile "org.jetbrains.kotlin:kotlin-test:$KOTLIN_VERSION"
-    testCompile 'org.robolectric:robolectric:3.1.2'
-    testCompile 'junit:junit:4.12'
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$KOTLIN_VERSION"
+    testImplementation 'org.robolectric:robolectric:3.8'
+    testImplementation 'junit:junit:4.12'
 }
 
-jacocoAndroidUnitTestReport {
-    excludes += ['**/*$$*']
+junitJacoco {
+    jacocoVersion = '0.8.1'
+    excludes = ['**/*$$*', '**/rx/android/**']
+    includeNoLocationClasses = false // type boolean
 }
 
-check.dependsOn jacocoTestReport
+//check.dependsOn jacocoTestReport

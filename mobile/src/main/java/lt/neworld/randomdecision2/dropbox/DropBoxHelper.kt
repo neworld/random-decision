@@ -52,10 +52,10 @@ class DropBoxHelper(
         }.subscribeOn(Schedulers.io())
     }
 
-    fun openFile(path: String): Single<InputStream> {
-        return Single.create<InputStream> {
-            val inputStream = client.files().download(path).inputStream
-            it.onSuccess(inputStream)
+    fun openFile(path: String): Single<() -> InputStream> {
+        return Single.create<() -> InputStream> {
+            val files = client.files()
+            it.onSuccess { files.download(path).inputStream }
         }.subscribeOn(Schedulers.io())
     }
 

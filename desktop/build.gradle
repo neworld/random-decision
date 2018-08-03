@@ -1,13 +1,9 @@
 apply plugin: 'java'
 apply plugin: 'kotlin'
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    compile project(":shared")
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$KOTLIN_VERSION"
+    implementation project(":shared")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$KOTLIN_VERSION"
 }
 
 jar {
